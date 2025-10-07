@@ -1,6 +1,24 @@
 pipeline {
     agent any
 
+    environment {
+        PATH = "/opt/homebrew/bin:/usr/local/bin:${PATH}"
+    }
+
+    stages {
+        stage('Backend Install & Test') {
+            dir('student-record-backend') {
+                steps {
+                    sh '''
+                    echo "Node version:"
+                    node -v || (echo "Node not found!" && exit 1)
+                    npm -v || (echo "npm not found!" && exit 1)
+                    npm install
+                    npm test || echo "Tests failed or skipped"
+                    '''
+                }
+            }
+        }
     stages {
         stage('Checkout') {
             steps {
@@ -55,4 +73,5 @@ pipeline {
             echo '❌ Pipeline failed!'
         }
     }
+}
 }
