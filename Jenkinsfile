@@ -1,58 +1,56 @@
 pipeline {
-    agent any
+  agent {
+    docker { image 'node:18-alpine' }
+  }
 
-    environment {
-        BACKEND_DIR = 'student-record-backend'
-        FRONTEND_DIR = 'frontend'
+  environment {
+    BACKEND_DIR = 'student-record-backend'
+    FRONTEND_DIR = 'frontend'
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
     }
 
-    stages {
-        stage('Checkout') {
-            steps {
-                git credentialsId: 'your-git-credential-id', 
-                    url: 'https://github.com/chetan7330/DevOps.git', 
-                    branch: 'main'
-            }
+    stage('Install & Test Backend') {
+      steps {
+        dir(BACKEND_DIR) {
+          sh 'npm install'
+          sh 'npm test || echo "No backend tests"'
+          sh 'docker build -t student-backend .'
         }
-
-        stage('Backend Build & Test') {
-            steps {
-                dir(BACKEND_DIR) {
-                    sh 'npm install'
-                    sh 'npm test || echo "No backend tests defined"'
-                    sh 'docker build -t student-backend .'
-                }
-            }
-        }
-
-        stage('Frontend Build & Test') {
-            steps {
-                dir(FRONTEND_DIR) {
-                    sh 'npm install'
-                    sh 'npm test || echo "No frontend tests defined"'
-                    sh 'npm run build'
-                    sh 'docker build -t student-frontend .'
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                // Example using docker-compose for deployment, customize as needed
-                sh 'docker-compose down'
-                sh 'docker-compose up -d --build'
-            }
-        }
+      }
     }
 
-    post {
-        success {
-            echo 'Build and deployment succeeded!'
-            // Add email notifications or Slack notifications here
+    stage('Install & Test Frontend') {
+      steps {
+        dir(FRONTEND_DIR) {
+          sh 'npm install'
+          sh 'npm test || echo "No frontend tests"'
+          sh 'npm run build'
+          sh 'docker build -t student-frontend .'
         }
-        failure {
-            echo 'Build or deployment failed.'
-            // Add failure notifications or rollback steps here
-        }
+      }
     }
+
+    stage('Deploy') {
+      steps {
+        // Example: Use docker-compose or SCP, replace with your deployment process
+        sh 'docker-compose down || true'
+        sh 'docker-compose up -d --build'
+      }
+    }
+  }
+
+  post {
+    success {
+      echo 'CI/CD pipeline completed successfully.'
+    }
+    failure {
+      echo 'Pipeline failed. Check logs.'
+    }
+  }
 }
