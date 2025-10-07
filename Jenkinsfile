@@ -25,7 +25,7 @@ pipeline {
 
 stage('Frontend Install & Build') {
   steps {
-    dir('frontend') {
+    dir('student-record-frontend') {
       sh 'npm install'
       sh 'npm run build'
     }
