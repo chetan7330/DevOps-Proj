@@ -9,19 +9,16 @@ pipeline {
         }
 
         stage('Backend Install & Test') {
-            steps {
-                dir('student-record-backend') {
-                    // Check Node version, install deps, run tests
-                    sh '''
-                        echo "Node version:"
-                        node -v || (echo "Node not found!" && exit 1)
-                        npm -v || (echo "npm not found!" && exit 1)
-                        npm install
-                        npm test || echo "Tests failed or skipped"
-                    '''
-                }
-            }
-        }
+    dir('student-record-backend') {
+        sh '''
+        echo "Node version:"
+        /opt/homebrew/bin/node -v || (echo "Node not found!" && exit 1)
+        /opt/homebrew/bin/npm install
+        /opt/homebrew/bin/npm test
+        '''
+    }
+}
+
 
         stage('Frontend Install & Build') {
             steps {
