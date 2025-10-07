@@ -1,11 +1,10 @@
 pipeline {
-  agent {
-    docker { image 'node:18-alpine' }
-  }
+  agent any
 
   environment {
     BACKEND_DIR = 'student-record-backend'
     FRONTEND_DIR = 'frontend'
+    PATH = "/opt/homebrew/bin:${env.PATH}" // Adjust this path as per your system
   }
 
   stages {
@@ -15,7 +14,7 @@ pipeline {
       }
     }
 
-    stage('Install & Test Backend') {
+    stage('Backend Build & Test') {
       steps {
         dir(BACKEND_DIR) {
           sh 'npm install'
@@ -25,7 +24,7 @@ pipeline {
       }
     }
 
-    stage('Install & Test Frontend') {
+    stage('Frontend Build & Test') {
       steps {
         dir(FRONTEND_DIR) {
           sh 'npm install'
@@ -38,7 +37,6 @@ pipeline {
 
     stage('Deploy') {
       steps {
-        // Example: Use docker-compose or SCP, replace with your deployment process
         sh 'docker-compose down || true'
         sh 'docker-compose up -d --build'
       }
@@ -50,7 +48,7 @@ pipeline {
       echo 'CI/CD pipeline completed successfully.'
     }
     failure {
-      echo 'Pipeline failed. Check logs.'
+      echo 'Build or deployment failed. Check logs.'
     }
   }
 }
