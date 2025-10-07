@@ -15,30 +15,24 @@ pipeline {
     }
 
     stage('Backend Install & Test') {
-      steps {
-        dir(BACKEND_DIR) {
-          sh '''
-            echo "Node version:"
-            node -v || { echo "Node not found!"; exit 1; }
-            npm install
-            npm test || echo "No backend tests"
-          '''
-        }
-      }
+  steps {
+    dir('student-record-backend') {
+      sh 'npm install'
+      sh 'npm test || echo "No backend tests"'
     }
+  }
+}
 
-    stage('Frontend Install & Build') {
-      steps {
-        dir(FRONTEND_DIR) {
-          sh '''
-            echo "Node version:"
-            node -v || { echo "Node not found!"; exit 1; }
-            npm install
-            npm run build
-          '''
-        }
-      }
+stage('Frontend Install & Build') {
+  steps {
+    dir('frontend') {
+      sh 'npm install'
+      sh 'npm run build'
     }
+  }
+}
+
+
 
     stage('Docker Build Backend') {
       steps {
