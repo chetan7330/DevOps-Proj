@@ -33,7 +33,6 @@ stage('Frontend Install & Build') {
 }
 
 
-
     stage('Docker Build Backend') {
       steps {
         sh 'docker build -t student-backend ./student-record-backend'
