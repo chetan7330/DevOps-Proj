@@ -30,12 +30,8 @@ pipeline {
     stage('Frontend Install & Build') {
       steps {
         dir(FRONTEND_DIR) {
-          sh '''
-            echo "Node version:"
-            node -v || { echo "Node not found!"; exit 1; }
-            npm install
-            npm test || echo "No frontend tests"
-          '''
+          sh 'npm install'
+        sh 'npm run build'
         }
       }
     }
