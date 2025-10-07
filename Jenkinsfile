@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    tools {
+        nodejs 'Node18'  // must match the name you configured
+    }
     environment {
         BACKEND_DIR = 'student-record-backend'
         FRONTEND_DIR = 'frontend'
