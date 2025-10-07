@@ -41,6 +41,15 @@ pipeline {
   }
 }
 
+stage('Debug Workspace Backend') {
+  steps {
+    dir('student-record-backend') {
+      sh 'ls -la'
+    }
+  }
+}
+
+
     stage('Docker Build Backend') {
       steps {
         sh 'docker build -t student-backend ./student-record-backend'
