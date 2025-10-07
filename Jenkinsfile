@@ -2,9 +2,9 @@ pipeline {
   agent any
 
   environment {
-    PATH = "/opt/homebrew/bin:${env.PATH}"  // Add full node and npm path here
+    PATH = "/opt/homebrew/bin:${env.PATH}"  // Adjust node path accordingly on your Mac
     BACKEND_DIR = 'student-record-backend'
-    FRONTEND_DIR = 'frontend'
+    FRONTEND_DIR = 'student-record-frontend'
   }
 
   stages {
@@ -13,32 +13,39 @@ pipeline {
         checkout scm
       }
     }
-
+    
     stage('Backend Install & Test') {
-  steps {
-    dir('student-record-backend') {
-      sh 'npm install'
-      sh 'npm test || echo "No backend tests"'
+      steps {
+        dir(BACKEND_DIR) {
+          sh '''
+            echo "Node version:"
+            node -v || { echo "Node not found!"; exit 1; }
+            npm install
+            npm test || echo "No backend tests"
+          '''
+        }
+      }
     }
-  }
-}
-
-stage('Frontend Install & Build') {
-  steps {
-    dir('student-record-frontend') {
-      sh 'npm install'
-      sh 'npm run build'
+    
+    stage('Frontend Install & Build') {
+      steps {
+        dir(FRONTEND_DIR) {
+          sh '''
+            echo "Node version:"
+            node -v || { echo "Node not found!"; exit 1; }
+            npm install
+            npm run build
+          '''
+        }
+      }
     }
-  }
-}
-
-
+    
     stage('Docker Build Backend') {
       steps {
         sh 'docker build -t student-backend ./student-record-backend'
       }
     }
-
+    
     stage('Deploy') {
       steps {
         sh 'docker-compose down || true'
@@ -46,7 +53,7 @@ stage('Frontend Install & Build') {
       }
     }
   }
-
+  
   post {
     success {
       echo '✅ Pipeline completed successfully'
