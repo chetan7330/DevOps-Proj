@@ -30,26 +30,42 @@ pipeline {
       }
     }
 
-    stage('Backend Build & Test') {
+    stage('Backend Build') {
       steps {
         dir(BACKEND_DIR) {
           sh 'npm install'
-          sh 'npm test || echo "No backend tests"'
           sh 'docker build -t student-backend .'
         }
       }
     }
 
-    stage('Frontend Build & Test') {
+    stage('Frontend Build') {
       steps {
         dir(FRONTEND_DIR) {
           sh 'npm install'
-          sh 'npm test || echo "No frontend tests"'
           sh 'npm run build'
           sh 'docker build -t student-frontend .'
         }
       }
     }
+
+    stage('Test Backend') {
+      steps {
+        dir(BACKEND_DIR) {
+          sh 'npm install'
+          sh 'npm test'
+        }
+      }
+    }   
+
+    stage('Test Frontend') {
+      steps {
+        dir(FRONTEND_DIR) {
+          sh 'npm install'
+          sh 'npm test -- --watchAll=false'
+        }
+      }
+    }   
 
     stage('Deploy') {
       steps {
@@ -61,6 +77,9 @@ pipeline {
   }
 
   post {
+    always {
+        junit 'student-record-backend/reports/junit/js-test-results.xml'
+    }
     success {
       echo 'Pipeline completed successfully.'
       // Add notifications if needed
