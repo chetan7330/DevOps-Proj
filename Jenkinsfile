@@ -2,15 +2,31 @@ pipeline {
   agent any
 
   environment {
-    BACKEND_DIR = 'student-record-backend'
-    FRONTEND_DIR = 'frontend'
-    PATH = "/opt/homebrew/bin:${env.PATH}" // Adjust this path as per your system
+    BACKEND_DIR = 'student-record-backend' // confirm exact directory name matches Git repo
+    FRONTEND_DIR = 'frontend' // confirm exact directory name matches Git repo
+    PATH = "/opt/homebrew/bin:${env.PATH}" // Add Node.js install path for Mac if needed
   }
 
   stages {
     stage('Checkout') {
       steps {
         checkout scm
+      }
+    }
+
+    stage('Prepare Submodules') {
+      steps {
+        // Initialize git submodules if any (ignore errors if none)
+        sh 'git submodule update --init --recursive || echo "No submodules to initialize"'
+      }
+    }
+
+    stage('Debug Workspace') {
+      steps {
+        // List root files and contents of backend folder
+        sh 'ls -la'
+        sh "ls -la ${BACKEND_DIR}"
+        sh "cat ${BACKEND_DIR}/package.json || echo 'No package.json in backend'"
       }
     }
 
@@ -37,6 +53,7 @@ pipeline {
 
     stage('Deploy') {
       steps {
+        // Example deploy commands with docker-compose; adjust for your environment
         sh 'docker-compose down || true'
         sh 'docker-compose up -d --build'
       }
@@ -45,10 +62,12 @@ pipeline {
 
   post {
     success {
-      echo 'CI/CD pipeline completed successfully.'
+      echo 'Pipeline completed successfully.'
+      // Add notifications if needed
     }
     failure {
-      echo 'Build or deployment failed. Check logs.'
+      echo 'Pipeline failed; check logs.'
+      // Add notifications or rollback logic if needed
     }
   }
 }
