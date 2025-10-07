@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  backend:
+    build: ./student-record-backend
+    container_name: student-backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./student-record-backend/.env
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: student-frontend
+    ports:
+      - "3001:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
