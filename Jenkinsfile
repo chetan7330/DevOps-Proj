@@ -35,7 +35,12 @@ pipeline {
         }
       }
     }
-    
+    stage('Verify Docker') {
+  steps {
+    sh 'docker --version || { echo "Docker not available"; exit 1; }'
+  }
+}
+
     stage('Docker Build Backend') {
       steps {
         sh 'docker build -t student-backend ./student-record-backend'
