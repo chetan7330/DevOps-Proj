@@ -58,10 +58,13 @@ stage('Debug Workspace Backend') {
 
 
     stage('Docker Build Backend') {
-      steps {
-        sh 'docker build -t student-backend ./student-record-backend'
-      }
+  steps {
+    dir('student-record-backend') {
+      sh 'docker build -t student-backend .'
     }
+  }
+}
+
     
     stage('Deploy') {
       steps {
