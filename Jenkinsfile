@@ -48,6 +48,13 @@ stage('Debug Workspace Backend') {
     }
   }
 }
+    stage('Debug Backend Files') {
+  steps {
+    dir('student-record-backend') {
+      sh 'ls -la'
+    }
+  }
+}
 
 
     stage('Docker Build Backend') {
