@@ -5,7 +5,7 @@ function StudentList() {
   const [students, setStudents] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:3000/students')
+    fetch('/students')     // Changed to relative URL
       .then(res => res.json())
       .then(setStudents);
   }, []);
@@ -15,10 +15,10 @@ function StudentList() {
       <h2>All Students</h2>
       <ul>
         {students.map(student => (
-          <li key={student._id}>
+          <li key={student.id}>
             {student.name} ({student.rollNo}) - {student.branch} {' '}
-            <Link to={`/view/${student._id}`}>View</Link> |{' '}
-            <Link to={`/edit/${student._id}`}>Edit</Link>
+            <Link to={`/view/${student.id}`}>View</Link> |{' '}
+            <Link to={`/edit/${student.id}`}>Edit</Link>
           </li>
         ))}
       </ul>

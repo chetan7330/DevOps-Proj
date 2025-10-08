@@ -6,7 +6,7 @@ function ViewStudent() {
   const [student, setStudent] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/students/${id}`)
+    fetch(`/students/${id}`)         // Changed to relative URL
       .then(res => res.json())
       .then(setStudent);
   }, [id]);

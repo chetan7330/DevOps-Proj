@@ -15,7 +15,7 @@ function EditStudentForm() {
   });
 
   useEffect(() => {
-    fetch(`http://localhost:3000/students/${id}`)
+    fetch(`/students/${id}`)        // Changed to relative URL
       .then(res => res.json())
       .then(data => setForm(data));
   }, [id]);
@@ -26,7 +26,7 @@ function EditStudentForm() {
 
   const handleSubmit = e => {
     e.preventDefault();
-    fetch(`http://localhost:3000/students/${id}`, {
+    fetch(`/students/${id}`, {       // Changed to relative URL
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form)

@@ -17,7 +17,7 @@ function AddStudentForm() {
 
   const handleSubmit = e => {
     e.preventDefault();
-    fetch('http://localhost:3000/students', {
+    fetch('/students', {     // Changed to relative URL, proxy will forward it
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form)
