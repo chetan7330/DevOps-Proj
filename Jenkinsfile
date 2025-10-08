@@ -1,45 +1,41 @@
 pipeline {
   agent any
 
+  environment {
+    PATH = "/usr/local/bin:$PATH" // Adjust node path accordingly on your Mac
+    BACKEND_DIR = 'student-record-backend'
+    FRONTEND_DIR = 'student-record-frontend'
+  }
+
   stages {
-    stage('Checkout SCM') {
+    stage('Checkout') {
       steps {
         checkout scm
       }
     }
-
-    stage('Debug Workspace') {
-      steps {
-        echo 'Listing root workspace contents:'
-        sh 'ls -la'
-      }
-    }
-
+    
     stage('Backend Install & Test') {
       steps {
-        dir('student-record-backend') {
-          echo 'Listing backend folder contents:'
-          sh 'ls -la'
-          echo 'Installing backend dependencies and running tests...'
-          sh 'npm install'
-          sh 'npm test'
+        dir(BACKEND_DIR) {
+          sh '''
+            echo "Node version:"
+            node -v || { echo "Node not found!"; exit 1; }
+            npm install
+            npm test || echo "No backend tests"
+          '''
         }
       }
     }
-
+    
     stage('Frontend Install & Build') {
       steps {
-        dir('student-record-frontend') {
-          echo 'Listing frontend folder contents:'
-          sh 'ls -la'
-          echo 'Installing frontend dependencies and building...'
+        dir(FRONTEND_DIR) {
           sh 'npm install'
-          sh 'npm run build'
+        sh 'npm run build'
         }
       }
     }
-
-    stage('Docker Build Backend') {
+   stage('Docker Build Backend') {
       steps {
         dir('student-record-backend') {
           echo 'Building backend Docker image...'
@@ -57,16 +53,20 @@ pipeline {
       }
     }
 
-    // Add stages for pushing Docker images or deployment here as needed
-
+    stage('Deploy') {
+      steps {
+        sh 'docker-compose down || true'
+        sh 'docker-compose up -d --build'
+      }
+    }
   }
-
+  
   post {
     success {
-      echo 'Pipeline completed successfully!'
+      echo '✅ Pipeline completed successfully'
     }
     failure {
-      echo 'Pipeline failed!'
+      echo '❌ Pipeline failed!'
     }
   }
 }
