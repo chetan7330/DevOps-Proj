@@ -60,7 +60,7 @@ stage('Debug Workspace Backend') {
     stage('Docker Build Backend') {
   steps {
     dir('student-record-backend') {
-      sh 'docker build -t student-backend .'
+      sh 'docker build -t student-backend ./student-record-backend || { echo "Docker build failed"; exit 1; }'
     }
   }
 }
