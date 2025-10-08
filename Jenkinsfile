@@ -1,85 +1,72 @@
 pipeline {
   agent any
 
-  environment {
-    PATH = "/usr/local/bin:$PATH" // Adjust node path accordingly on your Mac
-    BACKEND_DIR = 'student-record-backend'
-    FRONTEND_DIR = 'student-record-frontend'
-  }
-
   stages {
-    stage('Checkout') {
+    stage('Checkout SCM') {
       steps {
         checkout scm
       }
     }
-    
+
+    stage('Debug Workspace') {
+      steps {
+        echo 'Listing root workspace contents:'
+        sh 'ls -la'
+      }
+    }
+
     stage('Backend Install & Test') {
       steps {
-        dir(BACKEND_DIR) {
-          sh '''
-            echo "Node version:"
-            node -v || { echo "Node not found!"; exit 1; }
-            npm install
-            npm test || echo "No backend tests"
-          '''
+        dir('student-record-backend') {
+          echo 'Listing backend folder contents:'
+          sh 'ls -la'
+          echo 'Installing backend dependencies and running tests...'
+          sh 'npm install'
+          sh 'npm test'
         }
       }
     }
-    
+
     stage('Frontend Install & Build') {
       steps {
-        dir(FRONTEND_DIR) {
+        dir('student-record-frontend') {
+          echo 'Listing frontend folder contents:'
+          sh 'ls -la'
+          echo 'Installing frontend dependencies and building...'
           sh 'npm install'
-        sh 'npm run build'
+          sh 'npm run build'
         }
       }
     }
-    stage('Verify Docker') {
-  steps {
-    sh 'docker --version || { echo "Docker not available"; exit 1; }'
-  }
-}
-
-stage('Debug Workspace Backend') {
-  steps {
-    dir('student-record-backend') {
-      sh 'ls -la'
-    }
-  }
-}
-    stage('Debug Backend Files') {
-  steps {
-    dir('student-record-backend') {
-      sh 'ls -la'
-    }
-  }
-}
-
 
     stage('Docker Build Backend') {
-  steps {
-    dir('student-record-backend') {
-      sh 'docker build -t student-backend ./student-record-backend || { echo "Docker build failed"; exit 1; }'
-    }
-  }
-}
-
-    
-    stage('Deploy') {
       steps {
-        sh 'docker-compose down || true'
-        sh 'docker-compose up -d --build'
+        dir('student-record-backend') {
+          echo 'Building backend Docker image...'
+          sh 'docker build -t student-backend .'
+        }
       }
     }
+
+    stage('Docker Build Frontend') {
+      steps {
+        dir('student-record-frontend') {
+          echo 'Building frontend Docker image...'
+          sh 'docker build -t student-frontend .'
+        }
+      }
+    }
+
+    // Add stages for pushing Docker images or deployment here as needed
+
   }
-  
+
   post {
     success {
-      echo '✅ Pipeline completed successfully'
+      echo 'Pipeline completed successfully!'
     }
     failure {
-      echo '❌ Pipeline failed!'
+      echo 'Pipeline failed!'
     }
   }
 }
