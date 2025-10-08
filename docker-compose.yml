@@ -1,18 +1,21 @@
-version: "3.8"
+version: '3.8'
 
 services:
-  backend:
-    build: ./student-record-backend
-    container_name: student_backend
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    user: root
     ports:
-      - "5000:5000"
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/local/bin/docker:/usr/local/bin/docker   # gives Jenkins access to host Docker CLI
+      - .:/workspace                                  # optional: mount your project
     environment:
-      - NODE_ENV=production
+      - DOCKER_HOST=unix:///var/run/docker.sock
 
-  frontend:
-    build: ./student-record-frontend
-    container_name: student_frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
+volumes:
+  jenkins_home:
+    driver: local 
