@@ -6,6 +6,7 @@ function AddStudentForm() {
     name: '',
     rollNo: '',
     branch: '',
+    Date_of_Joining: '',
     company: '',
     duration: '',
     stipend: ''
@@ -30,6 +31,7 @@ function AddStudentForm() {
           rollNo: '',
           branch: '',
           company: '',
+          Date_of_Joining: '',
           duration: '',
           stipend: ''
         });
@@ -44,6 +46,7 @@ function AddStudentForm() {
         <input name="rollNo" placeholder="Roll Number" value={form.rollNo} onChange={handleChange} required />
         <input name="branch" placeholder="Branch" value={form.branch} onChange={handleChange} />
         <input name="company" placeholder="Company" value={form.company} onChange={handleChange} />
+        <input name="Date_of_Joining" placeholder="Date of Joining" value={form.Date_of_Joining} onChange={handleChange} />
         <input name="duration" placeholder="Duration" value={form.duration} onChange={handleChange} />
         <input name="stipend" placeholder="Stipend" value={form.stipend} onChange={handleChange} />
         <button type="submit">Add Student</button>

@@ -10,6 +10,7 @@ function EditStudentForm() {
     rollNo: '',
     branch: '',
     company: '',
+    Date_of_Joining: '',
     duration: '',
     stipend: ''
   });
@@ -39,6 +40,7 @@ function EditStudentForm() {
       <input name="rollNo" value={form.rollNo} onChange={handleChange} required />
       <input name="branch" value={form.branch} onChange={handleChange} />
       <input name="company" value={form.company} onChange={handleChange} />
+      <input name="Date_of_Joining" value={form.Date_of_Joining} onChange={handleChange} />
       <input name="duration" value={form.duration} onChange={handleChange} />
       <input name="stipend" value={form.stipend} onChange={handleChange} />
       <button type="submit">Update</button>

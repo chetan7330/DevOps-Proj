@@ -19,6 +19,7 @@ function ViewStudent() {
       <p>Roll No: {student.rollNo}</p>
       <p>Branch: {student.branch}</p>
       <p>Company: {student.company}</p>
+      <p>Date of Joining: {student.Date_of_Joining}</p>
       <p>Duration: {student.duration}</p>
       <p>Stipend: {student.stipend}</p>
       <Link to="/">Back to List</Link>
