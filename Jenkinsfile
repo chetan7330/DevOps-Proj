@@ -1,12 +1,9 @@
 pipeline {
-  agent any
-  tools {
-    nodejs 'nodejs-latest'  // Name configured in Jenkins global tool configuration
-  }
-  environment {
-    PATH = "/usr/local/bin:$PATH" // Adjust node path accordingly on your Mac
-    BACKEND_DIR = 'student-record-backend'
-    FRONTEND_DIR = 'student-record-frontend'
+  agent {
+    docker {
+      image 'node:18'
+      args '-v /var/run/docker.sock:/var/run/docker.sock' // if Docker commands are needed
+    }
   }
 
   stages {
