@@ -58,6 +58,7 @@ pipeline {
         script {
             sh '''
             docker compose down -v --remove-orphans || true
+            docker rm -f $(docker ps -aq --filter "name=jenkins") || true
             docker rm -f $(docker ps -aq --filter "name=mongo") || true
             docker compose up -d --build
             '''
