@@ -1,9 +1,5 @@
 pipeline {
-  agent{
-    docker {
-      image 'jenkins-agent-node:latest'
-    }
-  }
+  agent any
 
   environment {
     PATH = "/usr/local/bin:$PATH" // Adjust node path accordingly on your Mac
