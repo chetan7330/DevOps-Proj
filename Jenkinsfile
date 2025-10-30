@@ -1,6 +1,8 @@
 pipeline {
   agent any
-
+  tools {
+    nodejs 'nodejs-latest'  // Name configured in Jenkins global tool configuration
+  }
   environment {
     PATH = "/usr/local/bin:$PATH" // Adjust node path accordingly on your Mac
     BACKEND_DIR = 'student-record-backend'
