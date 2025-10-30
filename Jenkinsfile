@@ -18,7 +18,6 @@ pipeline {
       steps {
         dir(BACKEND_DIR) {
           sh '''
-            export PATH="/usr/local/bin:/usr/bin:/bin:/opt/homebrew/opt/node@20/bin:$PATH"
             echo "Node version:"
             node -v || { echo "Node not found!"; exit 1; }
             npm install
