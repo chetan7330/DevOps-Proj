@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    PATH = "/usr/local/bin:$PATH" // Adjust node path accordingly on your Mac
+    PATH = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin:/opt/homebrew/opt/node@20/bin"
     BACKEND_DIR = 'student-record-backend'
     FRONTEND_DIR = 'student-record-frontend'
   }
