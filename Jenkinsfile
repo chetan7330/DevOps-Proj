@@ -1,9 +1,6 @@
 pipeline {
-  agent {
-    docker {
-      image 'node:18'
-    }
-  }
+  agent any
+
   environment {
     PATH = "/usr/local/bin:$PATH" // Adjust node path accordingly on your Mac
     BACKEND_DIR = 'student-record-backend'
