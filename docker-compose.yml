@@ -18,7 +18,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: ./student-record-frontend
       dockerfile: Dockerfile
     container_name: frontend
     ports:
@@ -28,7 +28,7 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: ./student-record-backend
       dockerfile: Dockerfile
     container_name: backend
     ports:
