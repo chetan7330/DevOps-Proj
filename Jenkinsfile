@@ -13,32 +13,42 @@ pipeline {
         checkout scm
       }
     }
-    
+
     stage('Backend Install & Test') {
       steps {
         dir(BACKEND_DIR) {
           sh '''
-            echo "Node version:"
-            node -v || { echo "Node not found!"; exit 1; }
-            npm install
-            npm test || echo "No backend tests"
+            echo "🔧 Checking Node.js setup..."
+            bash -lc "node -v" || { echo "❌ Node not found!"; exit 1; }
+
+            echo "📦 Installing backend dependencies..."
+            bash -lc "npm install"
+
+            echo "🧪 Running backend tests (if any)..."
+            bash -lc "npm test || echo No backend tests found"
           '''
         }
       }
     }
-    
+
     stage('Frontend Install & Build') {
       steps {
         dir(FRONTEND_DIR) {
-          sh 'npm install'
-        sh 'npm run build'
+          sh '''
+            echo "📦 Installing frontend dependencies..."
+            bash -lc "npm install"
+
+            echo "⚙️ Building frontend..."
+            bash -lc "npm run build"
+          '''
         }
       }
     }
-   stage('Docker Build Backend') {
+
+    stage('Docker Build Backend') {
       steps {
         dir('student-record-backend') {
-          echo 'Building backend Docker image...'
+          echo '🐳 Building backend Docker image...'
           sh 'docker build -t student-backend .'
         }
       }
@@ -47,7 +57,7 @@ pipeline {
     stage('Docker Build Frontend') {
       steps {
         dir('student-record-frontend') {
-          echo 'Building frontend Docker image...'
+          echo '🐳 Building frontend Docker image...'
           sh 'docker build -t student-frontend .'
         }
       }
@@ -56,21 +66,22 @@ pipeline {
     stage('Deploy') {
       steps {
         script {
-            sh '''
+          echo '🚀 Deploying using Docker Compose...'
+          sh '''
             docker compose down -v --remove-orphans || true
             docker compose up -d --build
-            '''
+          '''
         }
       }
     }
   }
-  
+
   post {
     success {
-      echo '✅ Pipeline completed successfully'
+      echo '✅ Pipeline completed successfully!'
     }
     failure {
-      echo '❌ Pipeline failed!'
+      echo '❌ Pipeline failed. Check the console logs for details.'
     }
   }
 }
