@@ -43,10 +43,11 @@ pipeline {
         stage('Docker Build & Deploy') {
             steps {
                 script {
-                    echo "🚀 Deploying using Docker Compose..."
+                    
                     sh '''
-                        docker compose down -v --remove-orphans
-                        docker compose up -d --build
+                      echo "🚀 Deploying using Docker Compose..."
+                      docker compose down -v --remove-orphans
+                      docker compose up -d --build
                     '''
                 }
             }
