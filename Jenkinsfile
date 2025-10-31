@@ -1,87 +1,63 @@
 pipeline {
-  agent any
-
-  environment {
-    PATH = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin:/opt/homebrew/opt/node@20/bin"
-    BACKEND_DIR = 'student-record-backend'
-    FRONTEND_DIR = 'student-record-frontend'
-  }
-
-  stages {
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
+    agent any
+    environment {
+        DOCKER_BUILDKIT = '1'
     }
 
-    stage('Backend Install & Test') {
-      steps {
-        dir(BACKEND_DIR) {
-          sh '''
-            echo "🔧 Checking Node.js setup..."
-            bash -lc "node -v" || { echo "❌ Node not found!"; exit 1; }
-
-            echo "📦 Installing backend dependencies..."
-            bash -lc "npm install"
-
-            echo "🧪 Running backend tests (if any)..."
-            bash -lc "npm test || echo No backend tests found"
-          '''
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
         }
-      }
-    }
 
-    stage('Frontend Install & Build') {
-      steps {
-        dir(FRONTEND_DIR) {
-          sh '''
-            echo "📦 Installing frontend dependencies..."
-            bash -lc "npm install"
-
-            echo "⚙️ Building frontend..."
-            bash -lc "npm run build"
-          '''
+        stage('Backend Install & Test') {
+            steps {
+                dir('student-record-backend') {
+                    sh '''
+                        echo "🔧 Checking Node.js setup..."
+                        node -v
+                        echo "📦 Installing backend dependencies..."
+                        npm install
+                        echo "🧪 Running backend tests (if any)..."
+                        npm test || echo "No backend tests found"
+                    '''
+                }
+            }
         }
-      }
-    }
 
-    stage('Docker Build Backend') {
-      steps {
-        dir('student-record-backend') {
-          echo '🐳 Building backend Docker image...'
-          sh 'docker build -t student-backend .'
+        stage('Frontend Install & Build') {
+            steps {
+                dir('student-record-frontend') {
+                    sh '''
+                        echo "📦 Installing frontend dependencies..."
+                        npm install
+                        echo "⚙️ Building frontend..."
+                        npm run build
+                    '''
+                }
+            }
         }
-      }
-    }
 
-    stage('Docker Build Frontend') {
-      steps {
-        dir('student-record-frontend') {
-          echo '🐳 Building frontend Docker image...'
-          sh 'docker build -t student-frontend .'
+        stage('Docker Build & Deploy') {
+            steps {
+                script {
+                    echo "🚀 Deploying using Docker Compose..."
+                    sh '''
+                        docker compose down -v --remove-orphans
+                        docker compose up -d --build
+                    '''
+                }
+            }
         }
-      }
     }
 
-    stage('Deploy') {
-      steps {
-        script {
-          echo '🚀 Deploying using Docker Compose...'
-          sh '''
-            docker compose down -v --remove-orphans || true
-            docker compose up -d --build
-          '''
+    post {
+        success {
+            echo "✅ Pipeline completed successfully!"
         }
-      }
+        failure {
+            echo "❌ Pipeline failed!"
+        }
     }
-  }
-
-  post {
-    success {
-      echo '✅ Pipeline completed successfully!'
-    }
-    failure {
-      echo '❌ Pipeline failed. Check the console logs for details.'
-    }
-  }
 }
