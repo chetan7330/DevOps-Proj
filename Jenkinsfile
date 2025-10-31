@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-        DOCKER_BUILDKIT = '1'
-        PATH = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-    }
+    DOCKER_BUILDKIT = '1'
+    PATH = "/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+  } 
 
     stages {
         stage('Checkout') {
@@ -41,17 +41,22 @@ pipeline {
         }
 
         stage('Docker Build & Deploy') {
-            steps {
-                script {
-                    
-                    sh '''
-                      echo "🚀 Deploying using Docker Compose..."
-                      docker compose down -v --remove-orphans
-                      docker compose up -d --build
-                    '''
-                }
-            }
+    steps {
+        script {
+            sh '''
+              echo "🐳 Checking Docker setup..."
+              which docker || echo "❌ Docker not found in PATH"
+              docker --version || echo "❌ Docker command failed"
+              docker compose version || echo "❌ Docker Compose not found"
+              
+              echo "🚀 Deploying using Docker Compose..."
+              docker compose down -v --remove-orphans
+              docker compose up -d --build
+            '''
         }
+    }
+}
+
     }
 
     post {
