@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment {
         DOCKER_BUILDKIT = '1'
+        PATH = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
     }
 
     stages {
