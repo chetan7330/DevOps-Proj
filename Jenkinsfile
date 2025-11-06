@@ -32,13 +32,17 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        echo "🚀 Deploying using Docker Compose..."
-                        docker compose down -v --remove-orphans || true
-                        docker compose up -d --build
-                    '''
+                    echo "🚀 Cleaning up old containers before deploy..."
+                    docker rm -f mongo backend frontend 2>/dev/null || true
+
+                    echo "🧱 Deploying using Docker Compose..."
+                    docker compose down -v --remove-orphans || true
+                    docker compose up -d --build
+                  '''
                 }
-            }
+              }
         }
+
     }
 
     post {
