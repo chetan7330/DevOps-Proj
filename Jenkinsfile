@@ -15,6 +15,19 @@ pipeline {
             }
         }
 
+        stage('Clean Existing Containers') {
+            steps {
+                script {
+                    echo "🧹 Cleaning up old containers..."
+                    sh '''
+                        echo "Stopping and removing old containers..."
+                        docker ps -aq | xargs -r docker rm -f || true
+                        docker system prune -f || true
+                    '''
+                }
+            }
+        }
+
         stage('Build Backend Image') {
             steps {
                 dir('backend') {
@@ -83,7 +96,7 @@ pipeline {
         stage('Monitoring Stack (Prometheus & Grafana)') {
             steps {
                 script {
-                    echo "📊 Ensuring monitoring services are up..."
+                    echo "📊 Checking monitoring containers..."
                     sh '''
                         docker ps | grep prometheus || echo "⚠️ Prometheus not found!"
                         docker ps | grep grafana || echo "⚠️ Grafana not found!"
