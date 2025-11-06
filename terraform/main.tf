@@ -26,7 +26,7 @@ resource "docker_container" "backend" {
   image = docker_image.backend_image.name
   ports {
     internal = 3001
-    external = 3001
+    external = 3002
   }
   env = [
     "MONGO_URI=mongodb://tf-mongo:27017/mydb"
@@ -43,7 +43,7 @@ resource "docker_container" "frontend" {
   image = docker_image.frontend_image.name
   ports {
     internal = 80
-    external = 3000
+    external = 3004
   }
   depends_on = [docker_container.backend]
 }
