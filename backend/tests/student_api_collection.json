@@ -1,0 +1,82 @@
+{
+  "info": {
+    "_postman_id": "12345678-abcd-efgh-ijkl-987654321000",
+    "name": "Student API Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get All Students",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3001/students",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3001",
+          "path": ["students"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add Student",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"Test Student\",\n    \"rollNo\": \"101\",\n    \"branch\": \"CSE\",\n    \"company\": \"Google\",\n    \"Date_of_Joining\": \"2025-01-01\",\n    \"duration\": \"6 months\",\n    \"stipend\": \"25000\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3001/students",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3001",
+          "path": ["students"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Student",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"Updated Student\",\n    \"branch\": \"IT\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3001/students/101",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3001",
+          "path": ["students", "101"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Student",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3001/students/101",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3001",
+          "path": ["students", "101"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
+
