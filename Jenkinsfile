@@ -14,7 +14,6 @@ pipeline {
                 checkout scm
             }
         }
-
         stage('Clean Existing Containers') {
             steps {
                 script {
