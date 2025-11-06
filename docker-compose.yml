@@ -1,28 +1,74 @@
+version: "3.8"
+
 services:
   mongo:
     image: mongo:5
+    container_name: mongo
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    networks:
+      - monitoring-net
 
   backend:
     build:
       context: ./backend
+    container_name: backend
     ports:
       - "3001:3001"
     environment:
       - MONGO_URI=mongodb://mongo:27017/mydb
     depends_on:
       - mongo
+    networks:
+      - monitoring-net
 
   frontend:
     build:
       context: ./frontend
+    container_name: frontend
     ports:
       - "3000:80"
     depends_on:
       - backend
+    networks:
+      - monitoring-net
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - monitoring-net
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3005:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    networks:
+      - monitoring-net
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    networks:
+      - monitoring-net
 
 volumes:
   mongo_data:
+
+networks:
+  monitoring-net:
+    driver: bridge

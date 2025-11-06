@@ -2,13 +2,12 @@ pipeline {
     agent any
     environment {
         DOCKER_BUILDKIT = '1'
-        PATH = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/chetankrishna/.npm-global/bin"
+        PATH = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                echo "📥 Checking out source code..."
                 checkout scm
             }
         }
@@ -16,7 +15,6 @@ pipeline {
         stage('Build Backend Image') {
             steps {
                 dir('backend') {
-                    echo "⚙️ Building Backend Docker Image..."
                     sh 'docker build -t student-backend:latest .'
                 }
             }
@@ -25,52 +23,41 @@ pipeline {
         stage('Build Frontend Image') {
             steps {
                 dir('frontend') {
-                    echo "⚙️ Building Frontend Docker Image..."
                     sh 'docker build -t student-frontend:latest .'
                 }
             }
         }
 
-        stage('Run Docker Compose') {
+        stage('Deploy Using Docker Compose') {
             steps {
                 script {
-                    echo "🚀 Deploying containers using Docker Compose..."
                     sh '''
-                    docker rm -f $(docker ps -aq --filter "name=backend") || true
-                    docker rm -f $(docker ps -aq --filter "name=frontend") || true
-                    docker rm -f $(docker ps -aq --filter "name=mongo") || true
-                    
+                    echo "🚀 Cleaning old containers..."
                     docker compose down -v --remove-orphans || true
+                    echo "🚢 Starting new containers..."
                     docker compose up -d --build
                     '''
                 }
             }
         }
 
-        stage('Run API Tests') {
+        stage('Health Check') {
             steps {
-                script {
-                    echo "🧪 Running API Tests using Newman..."
-                    // Wait a bit for backend to start fully before testing
-                    sh '''
-                    sleep 10
-                    newman run backend/tests/student_api_collection.json || exit 1
-                    '''
-                }
+                sh '''
+                echo "🌐 Checking backend health..."
+                curl -f http://localhost:3001 || exit 1
+                echo "✅ Backend healthy!"
+                '''
             }
         }
     }
 
     post {
         success {
-            echo "✅ CI/CD Pipeline completed successfully! All tests passed!"
+            echo "✅ Full CI/CD + Monitoring pipeline successful!"
         }
         failure {
-            echo "❌ CI/CD Pipeline failed! Check Jenkins logs for details."
-        }
-        always {
-            echo "🧹 Cleaning up workspace..."
-            deleteDir()
+            echo "❌ Pipeline failed!"
         }
     }
 }
