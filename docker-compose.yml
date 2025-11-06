@@ -69,6 +69,7 @@ services:
 volumes:
   mongo_data:
 
+  
 networks:
   monitoring-net:
     driver: bridge
