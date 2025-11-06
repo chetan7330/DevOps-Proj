@@ -1,8 +1,7 @@
-version: "3.8"
 services:
   mongo:
     image: mongo:5
-    container_name: mongo
+    # container_name: mongo   ❌ REMOVE THIS LINE
     ports:
       - "27017:27017"
     volumes:
@@ -11,7 +10,7 @@ services:
   backend:
     build:
       context: ./backend
-    container_name: backend
+    # container_name: backend ❌ REMOVE THIS LINE
     ports:
       - "3001:3001"
     environment:
@@ -22,7 +21,7 @@ services:
   frontend:
     build:
       context: ./frontend
-    container_name: frontend
+    # container_name: frontend ❌ REMOVE THIS LINE
     ports:
       - "3000:80"
     depends_on:
