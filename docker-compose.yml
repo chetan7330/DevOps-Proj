@@ -16,7 +16,7 @@ services:
       context: ./backend
     container_name: backend
     ports:
-      - "3001:3001"
+      - "3010:3001"
     environment:
       - MONGO_URI=mongodb://mongo:27017/mydb
     depends_on:
@@ -29,7 +29,7 @@ services:
       context: ./frontend
     container_name: frontend
     ports:
-      - "3000:80"
+      - "3011:80"
     depends_on:
       - backend
     networks:
