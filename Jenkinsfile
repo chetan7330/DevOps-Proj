@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_BUILDKIT = '1'
-        PATH = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin"
-    }
-
     stages {
 
         stage('Checkout') {
@@ -14,16 +9,15 @@ pipeline {
                 checkout scm
             }
         }
+
         stage('Clean Existing Containers') {
             steps {
-                script {
-                    echo "🧹 Cleaning up old containers..."
-                    sh '''
-                        echo "Stopping and removing old containers..."
-                        docker ps -aq | xargs -r docker rm -f || true
-                        docker system prune -f || true
-                    '''
-                }
+                echo "🧹 Cleaning up old containers..."
+                sh '''
+                    echo "Stopping and removing old containers..."
+                    docker ps -aq | xargs -r docker rm -f
+                    docker system prune -f
+                '''
             }
         }
 
@@ -47,27 +41,23 @@ pipeline {
 
         stage('Deploy Using Docker Compose') {
             steps {
-                script {
-                    echo "🚀 Deploying stack using Docker Compose..."
-                    sh '''
-                        docker compose down -v --remove-orphans || true
-                        docker compose up -d --build
-                    '''
-                }
+                echo "🚀 Deploying stack using Docker Compose..."
+                sh '''
+                    docker compose down -v --remove-orphans
+                    docker compose up -d --build
+                '''
             }
         }
 
         stage('Infrastructure Provision (Terraform)') {
             steps {
                 dir('terraform') {
-                    script {
-                        echo "🏗️ Running Terraform for infrastructure setup..."
-                        sh '''
-                            terraform init -input=false
-                            terraform plan -input=false -out=tfplan
-                            terraform apply -auto-approve tfplan
-                        '''
-                    }
+                    echo "🏗️ Running Terraform for infrastructure setup..."
+                    sh '''
+                        terraform init -input=false
+                        terraform plan -input=false -out=tfplan
+                        terraform apply -auto-approve tfplan
+                    '''
                 }
             }
         }
@@ -76,38 +66,33 @@ pipeline {
             steps {
                 script {
                     echo "🩺 Performing health checks..."
-                    sh '''
-                        echo "⏳ Waiting for backend to start..."
-                        sleep 10
 
-                        echo "🌐 Checking backend health..."
-                        curl -f http://localhost:3002 || exit 1
-                        
-                        echo "🌍 Checking frontend..."
-                        curl -f http://localhost:3004 || exit 1
+                    echo "⏳ Waiting for backend to start..."
+                    sleep 10
 
-                        echo "✅ Health check passed!"
-                    '''
+                    echo "🌐 Checking backend health on port 3002..."
+                    sh 'curl -f http://localhost:3002'
+
+                    echo "🌐 Checking frontend health on port 3004..."
+                    sh 'curl -f http://localhost:3004'
                 }
             }
         }
 
         stage('Monitoring Stack (Prometheus & Grafana)') {
             steps {
-                script {
-                    echo "📊 Checking monitoring containers..."
-                    sh '''
-                        docker ps | grep prometheus || echo "⚠️ Prometheus not found!"
-                        docker ps | grep grafana || echo "⚠️ Grafana not found!"
-                    '''
-                }
+                echo "📊 Checking Prometheus and Grafana..."
+                sh '''
+                    curl -f http://localhost:9090
+                    curl -f http://localhost:3000
+                '''
             }
         }
     }
 
     post {
         success {
-            echo "✅ CI/CD Pipeline + Terraform + Monitoring completed successfully!"
+            echo "✅ Pipeline executed successfully!"
         }
         failure {
             echo "❌ Pipeline failed! Please check logs."
