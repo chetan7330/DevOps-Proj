@@ -62,23 +62,6 @@ pipeline {
             }
         }
 
-        // stage('Health Check') {
-        //     steps {
-        //         script {
-        //             echo "🩺 Performing health checks..."
-
-        //             echo "⏳ Waiting for backend to start..."
-        //             sleep 10
-
-        //             echo "🌐 Checking backend health on port 3002..."
-        //             sh 'curl -f http://localhost:3002'
-
-        //             echo "🌐 Checking frontend health on port 3004..."
-        //             sh 'curl -f http://localhost:3004'
-        //         }
-        //     }
-        // }
-
         stage('Monitoring Stack (Prometheus & Grafana)') {
             steps {
                 echo "📊 Checking Prometheus and Grafana..."
