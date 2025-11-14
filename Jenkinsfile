@@ -81,10 +81,10 @@ pipeline {
                         sleep 10
 
                         echo "🌐 Checking backend health..."
-                        curl -f http://localhost:3001 || exit 1
+                        curl -f http://localhost:3002 || exit 1
                         
                         echo "🌍 Checking frontend..."
-                        curl -f http://localhost:3000 || exit 1
+                        curl -f http://localhost:3004 || exit 1
 
                         echo "✅ Health check passed!"
                     '''
