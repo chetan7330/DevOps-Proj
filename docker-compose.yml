@@ -1,20 +1,17 @@
-version: "3.8"
-
 services:
   mongo:
     image: mongo:5
-    container_name: mongo
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
     networks:
       - monitoring-net
+    restart: unless-stopped
 
   backend:
     build:
       context: ./backend
-    container_name: backend
     ports:
       - "3010:3001"
     environment:
@@ -23,43 +20,44 @@ services:
       - mongo
     networks:
       - monitoring-net
-  # backend:
-  # image: chetankrishna03/backend:v1
-  # container_name: backend
-  # ports:
-  #   - "3001:3001"
-  # environment:
-  #   - MONGO_URI=mongodb://mongo:27017/mydb
-  # depends_on:
-  #   - mongo
-  # networks:
-  #   - monitoring-net
+    restart: unless-stopped
 
+  # Alternative backend (Docker Hub version)
+  # backend:
+  #   image: chetankrishna03/backend:v1
+  #   ports:
+  #     - "3001:3001"
+  #   environment:
+  #     - MONGO_URI=mongodb://mongo:27017/mydb
+  #   depends_on:
+  #     - mongo
+  #   networks:
+  #     - monitoring-net
+  #   restart: unless-stopped
 
   frontend:
     build:
       context: ./frontend
-    container_name: frontend
     ports:
       - "3011:80"
     depends_on:
       - backend
     networks:
       - monitoring-net
+    restart: unless-stopped
 
   prometheus:
     image: prom/prometheus:latest
-    container_name: prometheus
     ports:
       - "9090:9090"
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - monitoring-net
+    restart: unless-stopped
 
   grafana:
     image: grafana/grafana:latest
-    container_name: grafana
     ports:
       - "3005:3000"
     environment:
@@ -69,18 +67,18 @@ services:
       - prometheus
     networks:
       - monitoring-net
+    restart: unless-stopped
 
   node-exporter:
     image: prom/node-exporter:latest
-    container_name: node-exporter-1
     ports:
       - "9100:9100"
     networks:
       - monitoring-net
+    restart: unless-stopped
 
 volumes:
   mongo_data:
-
 
 networks:
   monitoring-net:
