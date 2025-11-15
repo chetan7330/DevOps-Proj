@@ -23,6 +23,18 @@ services:
       - mongo
     networks:
       - monitoring-net
+  # backend:
+  # image: chetankrishna03/backend:v1
+  # container_name: backend
+  # ports:
+  #   - "3001:3001"
+  # environment:
+  #   - MONGO_URI=mongodb://mongo:27017/mydb
+  # depends_on:
+  #   - mongo
+  # networks:
+  #   - monitoring-net
+
 
   frontend:
     build:
