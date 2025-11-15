@@ -24,6 +24,9 @@ function ViewStudent() {
       <p><b>Date of Joining:</b> {student.Date_of_Joining}</p>
       <p><b>Duration:</b> {student.duration}</p>
       <p><b>Stipend:</b> {student.stipend}</p>
+      <p><b>Mentor:</b> {student.mentor}</p>
+      <p><b>Contact:</b> {student.contact}</p>
+      <p><b>Email:</b> {student.email}</p>
 
       <Link to={`/edit/${student._id}`}>✏️ Edit</Link> |{' '}
       <Link to="/">← Back</Link>

@@ -10,7 +10,10 @@ function AddStudentForm() {
     company: '',
     Date_of_Joining: '',
     duration: '',
-    stipend: ''
+    stipend: '',
+    mentor: '',
+    contact: '',
+    email: '',
   });
 
   const navigate = useNavigate();
