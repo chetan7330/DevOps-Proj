@@ -29,31 +29,17 @@ pipeline {
         }
 
         stage('Run Tests') {
-            steps {
-                echo "🧪 Starting test stack and running Newman tests..."
-
-                // 1) Start only the services needed for tests
-                sh '''
-                  docker compose up -d mongo backend
-                  echo "⏳ Waiting for backend to be ready..."
-                  sleep 15
-                '''
-
-                // 2) Run Newman tests from backend folder
-                dir('backend') {
-                    sh '''
-                      npm install
-                      npx newman run tests/student_api_collection.json
-                    '''
-                }
-
-                // 3) Tear down test stack
-                sh '''
-                  echo "🧹 Tearing down test stack..."
-                  docker compose down
-                '''
-            }
+    steps {
+        dir('backend') {
+            echo '🧪 Running API tests using Newman...'
+            sh '''
+              npm install
+              npx newman run tests/student_api_collection.json
+            '''
         }
+    }
+}
+
 
         stage('Deploy Using Docker Compose') {
             steps {
