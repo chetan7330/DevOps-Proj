@@ -32,10 +32,7 @@ pipeline {
     steps {
         dir('backend') {
             echo '🧪 Running API tests using Newman...'
-            sh '''
-              npm install
-              npx newman run tests/student_api_collection.json
-            '''
+            sh 'newman run tests/student_api_collection.json'
         }
     }
 }
