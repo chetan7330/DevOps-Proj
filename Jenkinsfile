@@ -28,6 +28,15 @@ pipeline {
             }
         }
 
+        stage('Run Tests') {
+            steps {
+                dir('backend') {
+                    echo "🧪 Running API tests using Newman..."
+                    sh'newman run backend/tests/student_api_collection.json'
+                }
+            }
+        }
+
         stage('Deploy Using Docker Compose') {
             steps {
                 echo "🚀 Deploying stack using Docker Compose..."
