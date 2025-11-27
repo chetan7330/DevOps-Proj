@@ -32,10 +32,13 @@ pipeline {
     steps {
         dir('backend') {
             echo '🧪 Running API tests using Newman...'
-            sh 'newman run tests/student_api_collection.json'
+            sh '''
+              /Users/chetankrishna/.npm-global/bin/newman run tests/student_api_collection.json
+            '''
         }
     }
 }
+
 
 
         stage('Deploy Using Docker Compose') {
