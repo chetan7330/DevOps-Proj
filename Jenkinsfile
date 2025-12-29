@@ -38,9 +38,6 @@ pipeline {
         }
     }
 }
-
-
-
         stage('Deploy Using Docker Compose') {
             steps {
                 echo "🚀 Deploying stack using Docker Compose..."
@@ -51,7 +48,6 @@ pipeline {
             }
         }
     }
-
     post {
         success {
             echo "✅ Pipeline executed successfully!"
